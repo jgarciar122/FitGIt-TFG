@@ -1,0 +1,65 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.FitGit" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Colores de marca -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Colores secundarios y acentos -->
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <!-- Colores de fondo y superficie -->
+        <item name="android:windowBackground">@color/background_light</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+
+        <!-- Colores de estados (Crítico para que el Login no pete) -->
+        <item name="colorError">@color/error</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    </style>
+
+    <style name="DialogRedondeado" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceMediumComponent">@style/ShapeDialogRedondeado</item>
+        <item name="buttonBarPositiveButtonStyle">@style/BotonDialogPositivo</item>
+        <item name="buttonBarNegativeButtonStyle">@style/BotonDialogNegativo</item>
+    </style>
+
+    <style name="ShapeDialogRedondeado" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerRadius">24dp</item>
+    </style>
+
+    <style name="BotonDialogPositivo" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">12dp</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
+    <style name="BotonDialogNegativo" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">12dp</item>
+        <item name="strokeColor">@color/primary</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
+    <!-- Diálogos de acción destructiva (borrar) -->
+    <style name="DialogEliminar" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceMediumComponent">@style/ShapeDialogRedondeado</item>
+        <item name="buttonBarPositiveButtonStyle">@style/BotonDialogEliminar</item>
+        <item name="buttonBarNegativeButtonStyle">@style/BotonDialogNegativo</item>
+    </style>
+
+    <style name="BotonDialogEliminar" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">12dp</item>
+        <item name="backgroundTint">#EF5350</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+</resources>

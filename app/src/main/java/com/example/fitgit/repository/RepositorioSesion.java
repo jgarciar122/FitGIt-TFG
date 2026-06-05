@@ -1,0 +1,81 @@
+package com.example.fitgit.repository;
+
+import android.app.Application;
+import androidx.lifecycle.LiveData;
+import com.example.fitgit.database.AppDatabase;
+import com.example.fitgit.database.SesionDao;
+import com.example.fitgit.model.PuntoGrafica;
+import com.example.fitgit.model.SerieRegistro;
+import com.example.fitgit.model.Sesion;
+import com.example.fitgit.model.SesionConDetalle;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class RepositorioSesion {
+    private SesionDao dao;
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private RepositorioFirestore firestore = RepositorioFirestore.getInstance();
+
+    public RepositorioSesion(Application application) {
+        dao = AppDatabase.getDatabase(application).sesionDao();
+    }
+
+    public LiveData<List<Sesion>> obtenerHistorial(String userId) {
+        return dao.obtenerHistorial(userId);
+    }
+
+    public LiveData<List<SerieRegistro>> obtenerSeriesDeSesion(int sesionId) {
+        return dao.obtenerSeriesDeSesionCompleta(sesionId);
+    }
+
+    public LiveData<List<Sesion>> obtenerSesionesDesde(String userId, long desdeTimestamp) {
+        return dao.obtenerSesionesDesde(userId, desdeTimestamp);
+    }
+
+    public LiveData<List<Sesion>> obtenerSesionesSemana(String userId, long inicio, long fin) {
+        return dao.obtenerSesionesSemana(userId, inicio, fin);
+    }
+
+    public LiveData<List<PuntoGrafica>> obtenerEvolucionEjercicio(String ejercicioId, String userId) {
+        return dao.obtenerEvolucionEjercicio(ejercicioId, userId);
+    }
+
+    public LiveData<List<SesionConDetalle>> obtenerHistorialCompleto(String userId) {
+        return dao.obtenerHistorialCompleto(userId);
+    }
+
+    public long insertarSesionSincrono(Sesion sesion) {
+        long sesionId = dao.insertarSesion(sesion);
+        firestore.guardarSesion(sesion.userId, (int) sesionId, sesion.rutinaId, sesion.fecha);
+        return sesionId;
+    }
+
+    public void insertarSeries(List<SerieRegistro> series, String userId) {
+        executor.execute(() -> {
+            List<Long> ids = dao.insertarSeries(series);
+            for (int i = 0; i < series.size(); i++) {
+                SerieRegistro serie = series.get(i);
+                int serieId = ids.get(i).intValue();
+                firestore.guardarSerie(userId, serie.sesionId, serieId,
+                        serie.ejercicioId, serie.kg, serie.repeticiones);
+            }
+        });
+    }
+
+    public void eliminarSesionCompleta(int sesionId, String userId) {
+        executor.execute(() -> {
+            dao.eliminarSeriesDeSesion(sesionId);
+            dao.eliminarSesion(sesionId);
+            firestore.eliminarSeriesDeSesion(userId, sesionId);
+            firestore.eliminarSesion(userId, sesionId);
+        });
+    }
+
+    public void eliminarEjercicioDeSesion(int sesionId, String ejercicioId, String userId) {
+        executor.execute(() -> {
+            dao.eliminarEjercicioDeSesion(sesionId, ejercicioId);
+            firestore.eliminarEjercicioDeSesion(userId, sesionId, ejercicioId);
+        });
+    }
+}
